@@ -2,7 +2,52 @@
 Automated installation Document Database (DocDB) on CentOS/SLOS.
 
 * Introduction
-This is the V2 edition of the [[https://github.com/ElonSteveWang/auto-install-docdb][auto-install-docdb]]. It is based on the lastest verison (Version 8.8.12) of DocDB. The main improvements are: 
+This is the V2 edition of the [[https://github.com/ElonSteveWang/auto-install-docdb][auto-install-docdb]]. It is based on the lastest verison (Version 8.8.12) of DocDB. 
 
-  * correct several bug points of the docdb
-  * improve the configuration of the docdb user access.
+The main points of improvement are:
+
+  * Fix several bugs of the docdb,
+  * Improve the configuration of docdb user access.
+ 
+
+* Installation instructions
+ 
+Please have to remember to modify =/etc/sysconfig/selinux=, otherwise you will meet a lot of problem about =Perl= and =Apache=.
+ 
+ #+BEGIN_EXAMPLE
+vim /etc/sysconfig/selinux
+set "SELINUX=disabled"
+reboot
+#+END_EXAMPLE
+
+You have to update =docdbinstall.sh= to set yourself DocDB profiles. This bash file is also a part of our installer.
+
+If you meet a problem in installation like =BLOB, TEXT, GEOMETRY or JSON column 'Username' can't have a default value=, you can fix it in mysql shell by following sql =set sql_mode "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION";=.
+
+By the way, we maybe need to update the validate_password_policy in mysql.
+
+ #+BEGIN_EXAMPLE
+show variables like 'default_authentication_plugin';
+set global validate_password_policy=LOW; 
+flush privileges;
+#+END_EXAMPLE
+
+Don't forget to let your firewall allow your ports.
+
+#+BEGIN_EXAMPLE
+firewall-cmd --permanent --add-service=http
+semanage port -a -t http_port_t -p tcp 3389
+firewall-cmd --list-all
+#+END_EXAMPLE
+
+* Note
+
+There are two bugs in DocDB official version.
+  * SeacherAtoms.pm #116, 126  --> if ($MySQLVersion < 8)
+  * FSUtilities.pm #138  --> my $new_dir = $web_root."/".$hun_dir.$sub_dir.$ver_dir;
+
+I have reported it to the official github of DocDB. You needn't to worry about these two bugs when you use the default download source of this installer.
+
+
+
+

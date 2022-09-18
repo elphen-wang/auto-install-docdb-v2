@@ -1,0 +1,8 @@
+* auto-install-docdb-v2
+Automated installation Document Database (DocDB) on CentOS/SLOS.
+
+* Introduction
+This is the V2 edition of the [[https://github.com/ElonSteveWang/auto-install-docdb][auto-install-docdb]]. It is based on the lastest verison (Version 8.8.12) of DocDB. The main improvements are: 
+
+  * correct several bug points of the docdb
+  * improve the configuration of the docdb user access.
